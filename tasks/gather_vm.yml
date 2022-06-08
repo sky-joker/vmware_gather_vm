@@ -8,27 +8,29 @@
     folder: "{{ '/' + datacenter_name + '/vm/' + vm_folder | default('/%s/vm' % datacenter_name) }}"
   register: gather_vm_result
 
-- name: Set delete_vms variable
+- name: Set target_vm_info variable
   ansible.builtin.set_fact:
-    delete_vms: >-
-      {{ gather_vm_result.virtual_machines
-        | community.general.json_query('[*].guest_name')
-        | map('regex_search', '%s.*%s' % (tenant_name, delete_ipaddr))
-        | select()
+    target_vm_info: >-
+      {{ target_vm_info | default([])
+        + [
+            {
+              "vm_name": item.guest_name,
+              "networks": [
+                {
+                  "ip": item.ip_address
+                }
+              ]
+            }
+          ]
       }}
   vars:
     delete_ipaddr: "{{ delete_ipaddr_regex.split('.') | join('') }}"
+  loop: "{{ gather_vm_result.virtual_machines }}"
+  when:
+    - item.guest_name | regex_search('%s.*%s' % (tenant_name, delete_ipaddr))
 
 - name: If the folder doesn't exist
   ansible.builtin.fail:
     msg: "vm not found"
   when:
-    - delete_vms | length == 0
-
-- name: Set target_vm_info variable
-  ansible.builtin.set_fact:
-    target_vm_info: >-
-      {{ target_vm_info | default([])
-        + [{"vm_name": item}]
-      }}
-  loop: "{{ delete_vms }}"
+    - target_vm_info | length == 0
