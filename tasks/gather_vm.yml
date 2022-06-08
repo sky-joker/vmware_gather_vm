@@ -14,7 +14,7 @@
       {{ target_vm_info | default([])
         + [
             {
-              "vm_name": guest_name,
+              "vm_name": guest_name | replace('.%s' % domain, ''),
               "guest_fullname": item.guest_fullname,
               "networks": [
                 {
@@ -26,7 +26,7 @@
       }}
   vars:
     delete_ipaddr: "{{ delete_ipaddr_regex.split('.') | join('') }}"
-    guest_name: "{{ item.guest_name | regex_search('%s.*%s' % (tenant_name, delete_ipaddr)) }}"
+    guest_name: "{{ item.guest_name | regex_search('%s.*%s.*' % (tenant_name, delete_ipaddr)) }}"
   loop: "{{ gather_vm_result.virtual_machines }}"
   when:
     - guest_name
