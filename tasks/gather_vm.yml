@@ -15,6 +15,7 @@
         + [
             {
               "vm_name": item.guest_name,
+              "guest_fullname": item.guest_fullname,
               "networks": [
                 {
                   "ip": item.ip_address
