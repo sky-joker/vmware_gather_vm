@@ -1,0 +1,9 @@
+---
+argument_specs:
+  main:
+    short_description: "The variables are used in running the role"
+    options:
+      vm_folder:
+        type: str
+        required: true
+        description: "The folder name to deploy vm"
