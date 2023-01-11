@@ -2,8 +2,8 @@
 - name: Include pre-check tasks
   ansible.builtin.include_tasks: pre_check.yml
 
-- name: Include powered_on_vm tasks
-  ansible.builtin.include_tasks: powered_on_vm.yml
+# - name: Include powered_on_vm tasks
+#   ansible.builtin.include_tasks: powered_on_vm.yml
 
 - name: Include gather_vm tasks
   ansible.builtin.include_tasks: gather_vm.yml
